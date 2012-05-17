@@ -218,7 +218,7 @@ config_language(){
  BOOT_LANGUAGE="$(getbootparam 'lang' 2>>$DEBUG)"
  [ -n "$BOOT_LANGUAGE" ] && LANGUAGE="$BOOT_LANGUAGE"
 
- # set default to 'en' in live-cd mode iff $LANGUAGE is not set yet
+ # set default to 'en' in live-cd mode if $LANGUAGE is not set yet
  if [ -z "$INSTALLED" ] ; then
     [ -n "$LANGUAGE" ] || LANGUAGE='en'
  fi
