@@ -136,8 +136,8 @@ debnet::
 noautoconfig::
 
     Deactivate automounting. By default the scripts try to mount a device with
-    label 'GRMLCFG'. If you specify the noautoconfig bootparam this automounting
-    will be deactivated.
+    label 'GRMLCFG'. If you specify the noautoconfig boot parameter this
+    automounting will be deactivated.
 
   noautoconfig            => disables auto mounting of label 'GRMLCFG'
 
