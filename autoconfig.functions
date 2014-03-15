@@ -6,7 +6,7 @@
 # License:       This file is licensed under the GPL v2.
 ################################################################################
 
-# {{{ path, variables, signals, umask, zsh
+#  path, variables, signals, umask, zsh
 export PATH="/bin:/sbin:/usr/bin:/usr/sbin"
 DEBUG="/dev/null"
 KERNEL="$(uname -r)"
@@ -33,9 +33,9 @@ fi
 }
 # avoid 'no matches found: ...'
 iszsh && setopt no_nomatch # || echo "Warning: not running under zsh!"
-# }}}
+# 
 
-# {{{ Read in boot parameters
+#  Read in boot parameters
 if [ -z "$CMDLINE" ]; then
   # if CMDLINE was set from the outside, we're debugging.
   # otherwise, take CMDLINE from Kernel and config files.
@@ -53,9 +53,9 @@ if [ -z "$CMDLINE" ]; then
       fi
   fi
 fi
-# }}}
+# 
 
-### {{{ Utility Functions
+###  Utility Functions
 
 # Get a bootoption's parameter: read boot command line and either
 # echo last parameter's argument or return false.
@@ -132,9 +132,9 @@ set_passwd() {
   fi
 }
 
-### }}}
+### 
 
-# {{{ filesystems (proc, pts, sys) and fixes
+#  filesystems (proc, pts, sys) and fixes
 mount_proc(){
   [ -f /proc/version ] || mount -t proc /proc /proc 2>/dev/null
 }
@@ -146,14 +146,14 @@ mount_pts(){
 mount_sys(){
   [ -d /sys/devices ] || mount -t sysfs /sys /sys 2>/dev/null
 }
-# }}}
+# 
 
-# {{{ Check if we are running in live mode or from HD
+#  Check if we are running in live mode or from HD
 INSTALLED=""
 [ -e /etc/grml_cd ] || INSTALLED="yes"
-# }}}
+# 
 
-# {{{ provide information about virtual environments
+#  provide information about virtual environments
 VIRTUAL=false # assume physical system by default
 KVM=false
 VIRTUALBOX=false
@@ -168,9 +168,9 @@ elif [ "$(virt-what 2>/dev/null)" = "virtualbox" ] || \
    [ "$(imvirt 2>/dev/null)" = "VirtualBox" ] ; then
   VIRTUAL=true; VIRTUALBOX=true; VIRTUAL_ENV='VirtualBox'
 fi
-# }}}
+# 
 
-# {{{ source lsb-functions , color handling
+#  source lsb-functions , color handling
 if checkbootparam 'nocolor'; then
   RC_NOCOLOR=yes
   . /etc/grml/lsb-functions
@@ -179,9 +179,9 @@ else
   . /etc/grml/lsb-functions
   . /etc/grml_colors
 fi
-# }}}
+# 
 
-# {{{ debug
+#  debug
 config_debug(){
  checkbootparam 'debug'            && BOOTDEBUG="yes"
  checkbootparam "BOOT_IMAGE=debug" && BOOTDEBUG="yes"
@@ -209,9 +209,9 @@ config_debug(){
   fi
  }
 }
-# }}}
+# 
 
-# {{{ log
+#  log
 config_log(){
 if checkbootparam 'log' || checkbootparam 'debug' ; then
    export DEBUG="/tmp/grml.log.`date +%Y%m%d`"
@@ -225,9 +225,9 @@ else
    DEBUG="/dev/null"
 fi
 }
-# }}}
+# 
 
-# {{{ set firmware timeout via bootparam
+#  set firmware timeout via bootparam
 config_fwtimeout(){
  if checkbootparam 'fwtimeout' ; then
    TIMEOUT="$(getbootparam 'fwtimeout' 2>>$DEBUG)"
@@ -243,9 +243,9 @@ config_fwtimeout(){
    echo $TIMEOUT > /sys/class/firmware/timeout ; eend $?
  fi
 }
-# }}}
+# 
 
-### {{{ language configuration / localization
+###  language configuration / localization
 config_language(){
 
  einfo "Activating language settings:"
@@ -408,9 +408,9 @@ config_language(){
 
  eoutdent
 }
-# }}}
+# 
 
-# {{{ Set hostname
+#  Set hostname
 config_hostname(){
   if ! checkbootparam 'hostname' ; then
     return 0
@@ -427,9 +427,9 @@ config_hostname(){
   grml-hostname $HOSTNAME >>$DEBUG
   eend $?
 }
-# }}}
+# 
 
-# fstabuser (needed when running from harddisk with username != grml {{{
+# fstabuser (needed when running from harddisk with username != grml 
 config_userfstab(){
   # force load of build-in and local config
   [ -r /etc/grml/autoconfig ] && . /etc/grml/autoconfig
@@ -449,9 +449,9 @@ config_userfstab(){
   # if not yet set fall back to 'root' user, avoid bad /etc/fstab
   [ -n "$fstabuser" ] || fstabuser='root'
 }
-# }}}
+# 
 
-# local_user (needed when running with username != grml {{{
+# local_user (needed when running with username != grml 
 config_userlocal() {
 
   # force load of build-in and local config
@@ -464,9 +464,9 @@ config_userlocal() {
   # 2nd. use name standard user
   [ -n "$localuser" ] || localuser=$(getent passwd grml | cut -d: -f1)
 }
-# }}}
+# 
 
-# {{{ mount configfs
+#  mount configfs
 config_configfs() {
   einfo "Mounting configfs"
   CONFIGFS_DIR=/sys/kernel/config/
@@ -481,9 +481,9 @@ config_configfs() {
     eend $?
   fi
 }
-# }}}
+# 
 
-# {{{ Set clock (Local time is more often used than GMT, so it is default)
+#  Set clock (Local time is more often used than GMT, so it is default)
 config_time(){
  # don't touch the files if running from harddisk:
  if [ -z "$INSTALLED" ]; then
@@ -519,9 +519,9 @@ config_time(){
 
  fi
 }
-# }}}
+# 
 
-# {{{ print kernel info
+#  print kernel info
 config_kernel(){
   if $VIRTUAL && [ -n "$VIRTUAL_ENV" ] ; then
     einfo "Running Linux Kernel $KERNEL inside $VIRTUAL_ENV" ; eend 0
@@ -543,9 +543,9 @@ config_kernel(){
     eoutdent
   fi
 }
-# }}}
+# 
 
-# {{{ ld.so.cache + depmod
+#  ld.so.cache + depmod
 config_ld_mod(){
 if [ -n "$INSTALLED" ]; then
  if ! [ -r /etc/grml.first.boot ] ; then
@@ -560,9 +560,9 @@ if [ -n "$INSTALLED" ]; then
  fi
 fi
 }
-# }}}
+# 
 
-# {{{ timezone
+#  timezone
 config_timezone(){
  # don't touch the files if running from harddisk:
  if [ -z "$INSTALLED" ]; then
@@ -586,9 +586,9 @@ config_timezone(){
     fi
  fi
 }
-# }}}
+# 
 
-# small computer / nearly no ram {{{
+# small computer / nearly no ram 
 config_small(){
 
 RAM=$(/usr/bin/gawk '/MemTotal/{print $2}' /proc/meminfo)
@@ -633,9 +633,9 @@ else
 fi
 eoutdent
 }
-# }}}
+# 
 
-# skip startup of w3m {{{
+# skip startup of w3m 
 config_fast(){
 if checkbootparam 'fast'; then
   ewarn "Bootoption fast detected. Skipping startup of grml-quickconfig."
@@ -643,9 +643,9 @@ if checkbootparam 'fast'; then
   /sbin/telinit q ; eend $?
 fi
 }
-# }}}
+# 
 
-# activate serial console {{{
+# activate serial console 
 config_console(){
 if checkbootparam 'console'; then
   local line
@@ -699,18 +699,18 @@ if checkbootparam 'console'; then
   eend $?
 fi
 }
-# }}}
+# 
 
-# {{{ copy passwd-lockfile to ramdisk (fix unionfs-behaviour)
+#  copy passwd-lockfile to ramdisk (fix unionfs-behaviour)
 # otherwise we will get: passwd: Authentication token lock busy
 config_fix_passwd(){
  if [ -z "$INSTALLED" ] ; then
   touch /etc/.pwd.lock
  fi
 }
-# }}}
+# 
 
-# {{{ CD Checker
+#  CD Checker
 config_testcd(){
 if checkbootparam 'testcd' ; then
   einfo "Checking CD data integrity as requested by '${WHITE}testcd${NORMAL}' boot option."
@@ -753,9 +753,9 @@ if checkbootparam 'testcd' ; then
   eoutdent
 fi
 }
-# }}}
+# 
 
-# {{{ blacklist specific module [ used in /etc/init.d/udev ]
+#  blacklist specific module [ used in /etc/init.d/udev ]
 config_blacklist(){
 if checkbootparam 'blacklist' ; then
  if [ -z "$INSTALLED" ]; then
@@ -781,9 +781,9 @@ if checkbootparam 'blacklist' ; then
  fi
 fi
 }
-# }}}
+# 
 
-# {{{ ACPI
+#  ACPI
 config_acpi(){
 if checkbootparam 'noacpi'; then
   ewarn "ACPI: Not loading modules as requested by boot option \"noacpi\"." ; eend 0
@@ -819,9 +819,9 @@ else
   eoutdent
 fi
 }
-# }}}
+# 
 
-# {{{ Collect partitions from /proc/partitions first for enabling DMA
+#  Collect partitions from /proc/partitions first for enabling DMA
 check_partitions(){
 partitions=""
 IDEDISKS=""
@@ -835,21 +835,21 @@ while read major minor blocks partition relax; do
     [hs]d*|ub*) partitions="$partitions /dev/$partition";;    # IDE, USB or SCSI disk partition
   esac
 done <<EOT
-$(awk 'BEGIN{old="__start"}{if($0==old){exit}else{old=$0;if($4&&$4!="name"){print $0}}}' /proc/partitions)
+$(awk 'BEGIN{old="__start"}{if($0==old){exit}else{old=$0;if($4&&$4!="name"){print $0' /proc/partitions)
 EOT
 }
 check_partitions >/dev/null 2>&1 # avoid output "check_partitions:3: read-only file system"
 # }}}
 
-# {{{ Start brltty
+#  Start brltty
 config_brltty() {
   if checkbootparam 'brltty' ; then
     [ -x /lib/brltty/brltty.sh ] && /lib/brltty/brltty.sh
   fi
 }
-# }}}
+# 
 
-# {{{ Enable DMA for all IDE drives now if not disabled
+#  Enable DMA for all IDE drives now if not disabled
 # Notice: Already done by linuxrc, but make sure it's done also on harddisk-installed systems
 config_dma(){
 if checkbootparam 'nodma'; then
@@ -868,9 +868,9 @@ else
   done
 fi
 }
-# }}}
+# 
 
-# {{{ Start creating /etc/fstab with HD partitions and USB SCSI devices now
+#  Start creating /etc/fstab with HD partitions and USB SCSI devices now
 config_fstab(){
 
 NOSWAP="yes" # we do not use swap by default!
@@ -981,17 +981,17 @@ EOT
    fi # -n $partitions
 fi # -z $INSTALLED
 }
-# }}}
+# 
 
-# {{{ Mouse
+#  Mouse
 config_mouse(){
 if [ -n "$MOUSE_DEVICE" ] ; then
   einfo "Detecting mouse: ${MOUSE_FULLNAME} at ${MOUSE_DEVICE}" ; eend $?
 fi
 }
-# }}}
+# 
 
-# {{{ IPv6 configuration
+#  IPv6 configuration
 # Load IPv6 kernel module and print IP adresses
 config_ipv6(){
 if checkbootparam 'ipv6'; then
@@ -1018,9 +1018,9 @@ if checkbootparam 'ipv6'; then
   eend 0
 fi
 }
-# }}}
+# 
 
-# {{{ CPU-detection
+#  CPU-detection
 config_cpu(){
 if checkbootparam 'nocpu'; then
   ewarn "Skipping CPU detection as requested on boot commandline." ; eend 0
@@ -1089,9 +1089,9 @@ if [ -x /etc/init.d/loadcpufreq ] ; then
    eoutdent
 fi
 }
-# }}}
+# 
 
-# {{{ autostart of ssh
+#  autostart of ssh
 config_ssh(){
 if checkbootparam 'ssh' ; then
    local PASSWD
@@ -1129,9 +1129,9 @@ if checkbootparam 'ssh' ; then
 fi
 }
 
-# }}}
+# 
 
-# {{{ display hostkeys of SSH server
+#  display hostkeys of SSH server
 config_display_ssh_fingerprints() {
   if ! ls /etc/ssh/ssh_host_\*_key >/dev/null 2>&1 ; then
     return 0 # no SSH host keys present
@@ -1144,9 +1144,9 @@ config_display_ssh_fingerprints() {
   done | column -t
   eend $?
 }
-# }}}
+# 
 
-# {{{ autostart of x11vnc
+#  autostart of x11vnc
 config_vnc(){
 if checkbootparam 'vnc' ; then
    config_userlocal
@@ -1202,9 +1202,9 @@ if checkbootparam 'vnc' ; then
    fi
 fi
 }
-# }}}
+# 
 
-# {{{ set password for root and default user
+#  set password for root and default user
 config_passwd(){
 if checkbootparam 'passwd' >>$DEBUG 2>&1; then
   local PASSWD
@@ -1263,9 +1263,9 @@ if checkbootparam 'encpasswd' >>$DEBUG 2>&1; then
 
 fi
 }
-# }}}
+# 
 
-# {{{ Sound
+#  Sound
 config_mixer () {
    if ! [ -x /usr/bin/amixer ] ; then
       eerror "amixer binary not available. Can not set sound volumes therefore."
@@ -1345,9 +1345,9 @@ config_mixer () {
       done
    fi
 }
-# }}}
+# 
 
-# {{{ modem detection
+#  modem detection
 config_modem(){
 if checkbootparam 'nomodem'; then
   ewarn "Skipping check for AC97 modem controller as requested on boot commandline." ; eend 0
@@ -1360,9 +1360,9 @@ else
   fi
 fi
 }
-# }}}
+# 
 
-# {{{ wondershaper
+#  wondershaper
 config_wondershaper(){
  if checkbootparam 'wondershaper' ; then
     WONDER="$(getbootparam 'wondershaper' 2>>$DEBUG)"
@@ -1392,9 +1392,9 @@ config_wondershaper(){
     ( sh -c $CMD & ) && eend 0
  fi
 }
-# }}}
+# 
 
-# {{{ syslog-ng
+#  syslog-ng
 config_syslog(){
  if checkbootparam 'nosyslog'; then
     ewarn "Not starting syslog daemon as requested on boot commandline." ; eend 0
@@ -1415,9 +1415,9 @@ config_syslog(){
     fi
  fi
 }
-# }}}
+# 
 
-# {{{ gpm
+#  gpm
 config_gpm(){
  if checkbootparam 'nogpm'; then
   ewarn "Not starting GPM as requested on boot commandline." ; eend 0
@@ -1432,9 +1432,9 @@ config_gpm(){
    fi
  fi
 }
-# }}}
+# 
 
-# {{{ services
+#  services
 config_services(){
  if checkbootparam 'services' ; then
     SERVICE="$(getbootparam 'services' 2>>$DEBUG)"
@@ -1454,9 +1454,9 @@ config_services(){
     eend $?
  fi
 }
-# }}}
+# 
 
-# {{{ remote files
+#  remote files
 get_remote_file() {
   [ "$#" -eq 2 ] || ( echo "Error: wrong parameter for get_remote_file()" ; return 1 )
   SOURCE=$(eval echo "$1")
@@ -1482,9 +1482,9 @@ get_remote_file() {
     return 1;
  fi
 }
-# }}}
+# 
 
-# {{{ config files
+#  config files
 config_netconfig(){
  if checkbootparam 'netconfig' ; then
   CONFIG="$(getbootparam 'netconfig' 2>>$DEBUG)"
@@ -1496,9 +1496,9 @@ config_netconfig(){
 
  fi
 }
-# }}}
+# 
 
-# {{{ remote scripts
+#  remote scripts
 config_netscript() {
  if checkbootparam 'netscript' ; then
   CONFIG="$(getbootparam 'netscript' 2>>$DEBUG)"
@@ -1511,9 +1511,9 @@ config_netscript() {
 
  fi
 }
-# }}}
+# 
 
-# {{{ stats
+#  stats
 config_stats() {
  if ! checkbootparam 'nostats' ; then
    BASE_URL="http://stats.grml.org/report/"
@@ -1540,17 +1540,17 @@ config_stats() {
    get_remote_file "$URI" "/dev/null"  >/dev/null 2>&1 &!
  fi
 }
-# }}}
+# 
 
-# {{{ fix/workaround for unionfs
+#  fix/workaround for unionfs
 fix_unionfs(){
   if [ -z "$INSTALLED" ]; then
    touch /var/cache/apt/*cache.bin
   fi
 }
-# }}}
+# 
 
-# {{{ start X window system via grml-x
+#  start X window system via grml-x
 config_x_startup(){
 # make sure we start X only if startx is used *before* a nostartx option
 # so it's possible to disable automatic X startup using nostart
@@ -1596,9 +1596,9 @@ EOF
  fi
 fi
 }
-# }}}
+# 
 
-# {{{ configuration framework
+#  configuration framework
 config_extract(){
 if checkbootparam 'extract' ; then
  EXTRACT="$(getbootparam 'extract' 2>>$DEBUG)"
@@ -1707,9 +1707,9 @@ if checkbootparam 'partconf' ; then
  fi # [ -n "$MOUNTDEVICE" ]
 fi
 }
-# }}}
+# 
 
-# {{{ /cdrom/.*-options
+#  /cdrom/.*-options
 config_debs(){
 if checkbootparam 'debs' ; then
    iszsh && setopt localoptions shwordsplit
@@ -1736,11 +1736,6 @@ if checkbootparam 'scripts' || [ "$DCSMP" = "/mnt/grmlcfg" ]; then
    if ! echo $SCRIPTS | grep -q '/'; then
      # backwards compatibility: if no path is given get scripts from scripts/
      SCRIPTS="scripts/$SCRIPTS"
-   fi
-   if [ "$DCSMP" = "/mnt/grmlcfg" ]; then
-     # we are executing from a GRMLCFG labeled fs
-     # kick everything we have done before and start over
-     SCRIPTS="$(cd ${DCSDIR}; /bin/ls -1d [Gg][Rr][Mm][Ll].[Ss][Hh] 2>>$DEBUG)"
    fi
    if [ -n "$SCRIPTS" ]; then
      SCRIPTS="${DCSDIR}/$SCRIPTS"
@@ -1783,16 +1778,16 @@ if checkbootparam 'config' || [ "$DCSMP" = "/mnt/grmlcfg" ]; then
   fi
 fi
 }
-# }}}
+# 
 
-# {{{ confing_umount_dcsdir
+#  confing_umount_dcsdir
 config_umount_dcsdir(){
    # umount $DCSMP if it was mounted by finddcsdir
    grep -q "$DCSMP" /proc/mounts && umount "$DCSMP"
 }
-# }}}
+# 
 
-# {{{ mypath
+#  mypath
 config_mypath(){
 if checkbootparam 'mypath' ; then
    MY_PATH="$(getbootparam 'mypath' 2>>$DEBUG)"
@@ -1811,9 +1806,9 @@ if checkbootparam 'mypath' ; then
    eoutdent
 fi
 }
-# }}}
+# 
 
-# {{{ distcc
+#  distcc
 config_distcc(){
 if checkbootparam 'distcc' ; then
  OPTIONS="$(getbootparam 'distcc' 2>>$DEBUG)"
@@ -1891,9 +1886,9 @@ if checkbootparam 'gpp'; then
 fi
 
 }
-# }}}
+# 
 
-# {{{ load modules
+#  load modules
 # Notice: use it only on live-cd system, if running from harddisk please
 # add modules to /etc/modules and activate /etc/init.d/module-init-tools
 # in /etc/runlevel.conf
@@ -1917,9 +1912,9 @@ elif [ -z "$INSTALLED" ]; then
  fi
 fi
 }
-# }}}
+# 
 
-# {{{ SW-RAID
+#  SW-RAID
 config_swraid(){
   [ -n "$INSTALLED" ] && return 0
 
@@ -1987,9 +1982,9 @@ config_swraid(){
      fi # is /sbin/mdadm executable?
   fi # check for bootoptions
 }
-# }}}
+# 
 
-# {{{ dmraid
+#  dmraid
 config_dmraid(){
   [ -n "$INSTALLED" ] && return 0
 
@@ -2057,9 +2052,9 @@ config_dmraid(){
   einfo "Searching for any present dmraid sets:"
   dmraid_wrapper -r
 }
-# }}}
+# 
 
-# {{{ LVM (Logical Volumes)
+#  LVM (Logical Volumes)
 config_lvm(){
   [ -n "$INSTALLED" ] && return 0
 
@@ -2084,27 +2079,27 @@ config_lvm(){
     fi # check for lvm binary
   fi # check for bootoption nolvm
 }
-# }}}
+# 
 
-# {{{ debnet: setup network based on an existing one found on a partition
+#  debnet: setup network based on an existing one found on a partition
 config_debnet(){
 if checkbootparam 'debnet' ; then
  einfo "Bootoption 'debnet' found. Searching for Debian network configuration: "
  /usr/sbin/debnet
 fi
 }
-# }}}
+# 
 
-# {{{ disable console blanking
+#  disable console blanking
 config_blanking(){
 if checkbootparam 'noblank' ; then
   einfo "Bootoption noblank found. Disabling monitor blanking."
   setterm -blank 0 ; eend $?
 fi
 }
-# }}}
+# 
 
-# {{{ tohd= bootoption
+#  tohd= bootoption
 config_tohd()
 {
   if checkbootparam 'tohd' ; then
@@ -2143,9 +2138,9 @@ config_tohd()
      rmdir "$MOUNTDIR"
   fi
 }
-# }}}
+# 
 
-# {{{ debootstrap: automatic installation
+#  debootstrap: automatic installation
 config_debootstrap(){
 
 if checkbootparam "BOOT_IMAGE=debian2hd" || checkbootparam "debian2hd" ; then
@@ -2235,7 +2230,7 @@ einfo "Invoking a shell, just exit to continue booting..."
 
 fi # checkbootparam "BOOT_IMAGE=debian2hd
 }
-# }}}
+# 
 
 config_virtualbox_shared_folders() {
 if $VIRTUALBOX ; then
@@ -2327,7 +2322,7 @@ if $VIRTUALBOX ; then
 fi
 }
 
-# {{{ Support customization
+#  Support customization
 config_distri(){
 if checkbootparam 'distri'; then
   DISTRI="$(getbootparam 'distri' 2>>$DEBUG)"
@@ -2339,7 +2334,7 @@ if checkbootparam 'distri'; then
   fi
 fi
 }
-# }}}
+# 
 
 ## END OF FILE #################################################################
 # vim:foldmethod=marker expandtab ai ft=zsh shiftwidth=2
